@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load static %}
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Expense Report</title>
+  <style type="text/css">
+    @page {
+      size: A4 portrait;
+      margin: 1.5cm;
+    }
+
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 10pt;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .report-header {
+      text-align: center;
+      margin-bottom: 40pt;
+    }
+    .report-header h1 {
+      font-size: 26pt;
+      color: #2c3e50;
+      margin: 0 0 12pt;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .generation-date {
+      font-size: 9pt;
+      color: #7f8c8d;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #e0e0e0;
+      margin: 30pt 0;
+    }
+
+    .receipt-section {
+      margin-bottom: 30pt;
+    }
+    .receipt-section h2 {
+      font-size: 16pt;
+      color: #2c3e50;
+      margin: 0 0 4pt;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+    .meta {
+      font-size: 9pt;
+      color: #555;
+      margin: 0 0 12pt;
+    }
+
+    .items-label {
+      font-size: 10pt;
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 6pt;
+    }
+
+    table.receipt-items {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+      margin-bottom: 12pt;
+      border: 1px solid #e0e0e0;
+    }
+    table.receipt-items th,
+    table.receipt-items td {
+      border: 1px solid #e0e0e0;
+      padding: 4pt 10pt; /* MODIFIED: Reduced top/bottom padding */
+    }
+    table.receipt-items th {
+      background-color: #f5f5f5;
+      font-size: 8pt;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .qty { text-align: right; }
+    .unit { text-align: left; }
+    .price, .total { text-align: right; }
+    .row-odd { background-color: #fcfcfc; }
+    .row-even { background-color: #fff; }
+
+    .totals-section {
+      text-align: right;
+      margin-top: 10pt;
+      font-size: 10pt;
+    }
+    .totals-section p {
+      margin: 4pt 0;
+    }
+    .totals-section p strong {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .grand-totals {
+      margin-top: 40pt;
+    }
+    .grand-totals h2 {
+      font-size: 16pt;
+      color: #2c3e50;
+      margin: 0 0 10pt;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 6pt;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+    .grand-totals p {
+      font-size: 11pt;
+      margin: 6pt 0;
+      line-height: 1.6;
+    }
+    .grand-totals p::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+    .grand-totals p strong {
+      font-weight: bold;
+      float: left;
+      color: #2c3e50;
+    }
+    .grand-totals p .value-display {
+        float: right;
+        font-weight: normal;
+    }
+
+    #footer-content {
+      text-align: right;
+      font-size: 8pt;
+      color: #7f8c8d;
+      margin-top: 30pt;
+      padding-top: 10pt;
+      border-top: 1px solid #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-header">
+    <h1>Expense Report</h1>
+    {# <p class="generation-date">Generated on: {{ generation_date|date:"F j, Y" }}</p> #}
+  </div>
+
+  {% for r in receipts %}
+    <div class="receipt-section">
+      <h2>{{ r.company }}</h2>
+      <p class="meta">{{ r.date|date:"F j, Y" }} — {{ r.time|time:"P" }}</p>
+
+      <p class="items-label">Items:</p>
+      <table class="receipt-items">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th width="60" class="qty">Qty</th>
+            <th width="65" class="unit">Unit</th>
+            <th width="70" class="price">Unit Price</th>
+            <th width="75" class="total">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in r.items.all %}
+            <tr class="row-{% cycle 'odd' 'even' %}">
+              <td>{{ item.description }}</td>
+              <td class="qty">{{ item.quantity|floatformat:"-3" }}</td>
+              <td class="unit">
+                {% if item.quantity_unit %}{{ item.quantity_unit }}{% else %}—{% endif %}
+              </td>
+              <td class="price">
+                {% if item.price %}{{ item.price|floatformat:"2" }}{% else %}—{% endif %}
+              </td>
+              <td class="total">{{ item.total_price|floatformat:"2" }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" style="text-align:center; padding:10pt; color:#7f8c8d;">
+                No items for this receipt.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% if r.items.all %}
+        <div class="totals-section">
+          <p>Subtotal: {{ r.sub_total|floatformat:"2" }}</p>
+          <p>Tax: {{ r.tax|floatformat:"2" }}</p>
+          <p><strong>Total: {{ r.total|floatformat:"2" }}</strong></p>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if not forloop.last %}
+      <hr class="divider" />
+    {% endif %}
+  {% endfor %}
+
+  {% if receipts %}
+    <div class="grand-totals">
+      <h2>Grand Totals</h2>
+      <p><strong>Subtotal:</strong> <span class="value-display">{{ grand_subtotal|floatformat:"2" }}</span></p>
+      <p><strong>Tax:</strong> <span class="value-display">{{ grand_tax|floatformat:"2" }}</span></p>
+      <p><strong>Total:</strong> <span class="value-display">{{ grand_total|floatformat:"2" }}</span></p>
+    </div>
+  {% endif %}
+
+  <div id="footer-content">
+    Page <pdf:pagenumber /> of <pdf:pagecount />
+  </div>
+</body>
+</html>
