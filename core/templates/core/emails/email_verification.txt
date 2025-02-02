@@ -1,0 +1,29 @@
+Welcome to Squirll{% if user.first_name %}, {{ user.first_name }}{% endif %}!
+
+Thank you for creating your Squirll account. To complete your registration and start managing your receipts, please verify your email address.
+
+VERIFY YOUR EMAIL ADDRESS
+==========================
+
+Please click on the following link or copy and paste it into your browser:
+
+{{ verification_url }}
+
+IMPORTANT SECURITY INFORMATION
+===============================
+
+⏰ This verification link will expire in {{ expires_hours }} hours for security reasons.
+
+🔒 If you didn't create a Squirll account, please ignore this email. Your email address will not be added to our system.
+
+NEED HELP?
+==========
+
+If you have any questions or need assistance, please contact our support team.
+
+---
+
+This email was sent to {{ user.email }}.
+
+© 2024 Squirll. All rights reserved.
+Squirll - Receipt Management Made Simple 
