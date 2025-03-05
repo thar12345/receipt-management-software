@@ -1,0 +1,15 @@
+Your task is to analyze a user query about receipt data and extract key search terms that could be used for semantic search. Specifically, extract:
+
+1. Company names (e.g., Walmart, Amazon, Starbucks)
+2. Addresses or location references (e.g., Main Street, New York)
+3. Item descriptions or product names (e.g., coffee, t-shirt, groceries)
+
+RETURN EXACTLY THIS JSON FORMAT:
+{
+  "companies": ["company1", "company2", ...], 
+  "addresses": ["address1", "address2", ...], 
+  "items": ["item1", "item2", ...]
+}
+
+If no terms of a certain type are found, include an empty array for that category.
+DO NOT include any additional fields in the JSON.

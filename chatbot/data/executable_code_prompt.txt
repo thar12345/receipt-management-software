@@ -1,0 +1,72 @@
+Analyze the following query and provide executable Python code that uses Django ORM to answer the query.
+The query is basically for the user to gain information about their spending habits and purchases. if query is unrelated to this then say 'Unable to process query'
+The user writing the query has user_id={currentuser}. Only use this user's data by filtering with user_id={currentuser}.
+The code should directly use the Django models to get the results.
+
+Query: {user_query}
+
+Models:
+{models_content}
+
+FAISS Semantic Search Results:
+{faiss_info}
+
+IMPORTANT INSTRUCTIONS:
+
+1. DATE HANDLING:
+   - "last month" means the previous calendar month from today
+   - "this month" means the current calendar month
+   - Use: from datetime import datetime, timedelta
+   - Example for last month: 
+     today = datetime.now()
+     last_month = today.replace(day=1) - timedelta(days=1)
+     start_date = last_month.replace(day=1)
+     end_date = today.replace(day=1) - timedelta(days=1)
+   - Filter receipts: Receipt.objects.filter(date__range=[start_date, end_date])
+
+2. CATEGORY DETECTION:
+   - Categories like "groceries", "electronics", "restaurants" are found in the receipt_type field
+   - Use case-insensitive matching: receipt_type__icontains='groceries'
+   - Common categories: groceries, restaurants, shopping, electronics, gas, pharmacy, etc.
+
+3. SPENDING CALCULATIONS:
+   - Use .aggregate(Sum('total')) to calculate total spending
+   - For item-level: use receipts.items.aggregate(Sum('total_price'))
+
+4. EXAMPLE PATTERNS:
+   - Grocery spending: Receipt.objects.filter(user_id=X, receipt_type__icontains='grocery')
+   - Date range: Receipt.objects.filter(user_id=X, date__range=[start, end])
+   - Combined: Receipt.objects.filter(user_id=X, receipt_type__icontains='grocery', date__range=[start, end])
+
+These semantic search results show the closest matches in our database based on the query.
+Use this information when constructing your database queries to ensure you're looking for the right companies, addresses, or item descriptions that actually exist in the database.
+
+5. REQUIRED IMPORTS:
+   - from receipt_mgmt.models import Receipt, Item
+   - from django.db.models import Sum, Avg, Count, Min, Max
+   - from datetime import datetime, timedelta
+   - import decimal
+
+6. COMMON PATTERNS:
+   - Always filter by user_id={currentuser}
+   - For totals: .aggregate(total_spending=Sum('total'))['total_spending'] or Decimal('0')
+   - Handle None values: total_spending or Decimal('0')
+
+Return only the Python code without any explanations or markdown formatting. 
+The code should be ready to execute and store the result in a variable named 'result'. 
+Include all necessary imports and the code should be self-contained. 
+The name of the app is 'receipt_mgmt'. 
+Don't have '__name__ == '__main__'' in the code. 
+When asked to retrieve image, retrieve raw_images from receipts. 
+If the query involves exporting data to a file (CSV, Excel, PDF, etc.), the code should include the necessary logic to create the file in memory using an io.BytesIO buffer.  
+Do not save the file to disk. Instead:
+- Create the file in memory using io.BytesIO.
+- Write the file contents into the buffer (e.g., with csv, pandas, or or openpyxl as appropriate).
+- Assign the buffer object to a variable called file_stream.
+- Assign the desired filename (e.g., "report.csv" or "report.xlsx") to a variable called filename.
+The view will return this file to the frontend using a FileResponse.
+Do not use file paths, file.save(), or any disk operations. 
+If you cannot write code to process this query, simply return the exact string: 'Unable to process query'
+Do not process queries that would change anything in the database. simply say 'Unable to process query'
+Do not process queries where user asks to label their spending such as "how much i spend is considered high" because we don't have a threshold on what is considered high
+
