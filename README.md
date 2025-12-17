@@ -28,13 +28,13 @@ This project is an intelligent receipt management and expense tracking applicati
 
 ## Challenges & What I Learned
 
-Building Squirll taught me how to integrate multiple cloud services and AI APIs into a cohesive system. The biggest challenge was creating a reliable document parsing pipeline that could handle various receipt formats while maintaining accuracy. I learned to implement usage-based billing logic, optimize database queries for analytics, and build a scalable architecture that separates concerns between receipt processing, user management, and analytics. Working with real-time features through WebSockets and managing asynchronous tasks with Celery deepened my understanding of concurrent systems.
+Building this project taught me how to integrate multiple cloud services and AI APIs into a cohesive system. The biggest challenge was creating a reliable document parsing pipeline that could handle various receipt formats while maintaining accuracy. I learned to implement usage-based billing logic, optimize database queries for analytics, and build a scalable architecture that separates concerns between receipt processing, user management, and analytics. Working with real-time features through WebSockets and managing asynchronous tasks with Celery deepened my understanding of concurrent systems.
 
 ## How to Run
 
 1. **Clone and setup environment**:
    ```bash
-   git clone https://github.com/yourusername/squirll.git
+   git clone <repo link>
    cd squirll
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
