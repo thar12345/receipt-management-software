@@ -1,7 +1,7 @@
 # Receipt Management
 ## Overview
 
-Squirll is an intelligent receipt management and expense tracking application that uses AI to automatically parse, categorize, and analyze receipts from both image uploads and email processing. Built with Django and integrated with Azure Document Intelligence, it transforms messy receipt data into organized financial insights.
+This project is an intelligent receipt management and expense tracking application that uses AI to automatically parse, categorize, and analyze receipts from both image uploads and email processing. Built with Django and integrated with Azure Document Intelligence, it transforms messy receipt data into organized financial insights.
 
 ## Features
 
